@@ -1,0 +1,18 @@
+---
+- name: Add user "ansibleuser" to sudo
+  hosts: workers
+  remote_user: root
+
+  tasks:
+  - name: create the file in sudoers 
+    file: 
+      path: "/etc/sudoers.d/netbackup"
+      state: touch
+
+  - name: Add lines and Validate the sudoers file before saving
+    ansible.builtin.lineinfile:
+      path: /etc/sudoers.d/netbackup
+      state: present
+    #  regexp: '^%ADMIN ALL='
+      line: '%99gutest ALL=(ALL) NOPASSWD: /bin/systemctl start kubelet'
+      validate: /usr/sbin/visudo -cf %s
